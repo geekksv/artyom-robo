@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Artyom Robo — Servo Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Artyom&nbsp;Robo</h1>
+    <div class="status">
+      <span id="hwBadge" class="badge">…</span>
+      <span id="runBadge" class="badge run hidden">running: <b id="runName"></b></span>
+    </div>
+  </header>
+
+  <main>
+    <!-- CAMERA -->
+    <section class="card" id="camCard">
+      <div class="card-head">
+        <h2>Camera</h2>
+        <div class="actions">
+          <button id="camToggle" class="btn small">Hide</button>
+        </div>
+      </div>
+      <div class="cam-wrap" id="camWrap">
+        <img id="camImg" alt="camera feed" />
+        <div id="camMsg" class="cam-msg">camera off</div>
+      </div>
+    </section>
+
+    <!-- LIVE CONTROL -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Live control</h2>
+        <div class="actions">
+          <button id="centerBtn" class="btn">Center all</button>
+          <button id="stopBtn" class="btn danger">■ Stop</button>
+        </div>
+      </div>
+      <div id="servos" class="servos"></div>
+    </section>
+
+    <!-- AI CONTROL -->
+    <section class="card hidden" id="aiCard">
+      <div class="card-head">
+        <h2>AI control <span class="badge">Haiku</span></h2>
+      </div>
+      <div class="ai-row">
+        <input id="aiPrompt" class="text" placeholder="e.g. nod servo 1 twice, then center all" />
+        <button id="aiGenBtn" class="btn">Generate</button>
+        <button id="aiRunBtn" class="btn primary">Generate &amp; Run</button>
+      </div>
+      <p class="muted">Describes a motion in plain English → builds a sequence below (and loads it into the builder to tweak/save).</p>
+    </section>
+
+    <!-- SEQUENCE BUILDER -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Sequence builder</h2>
+        <div class="actions">
+          <button id="captureBtn" class="btn">+ Capture pose as step</button>
+        </div>
+      </div>
+
+      <div id="steps" class="steps"></div>
+      <p id="noSteps" class="muted">No steps yet. Move the servos, then “Capture pose”.</p>
+
+      <div class="builder-foot">
+        <label class="inline"><input type="checkbox" id="loopChk" /> loop</label>
+        <input id="seqName" class="text" placeholder="sequence name" />
+        <button id="runDraftBtn" class="btn primary">▶ Run draft</button>
+        <button id="saveBtn" class="btn">Save</button>
+        <button id="clearBtn" class="btn ghost">Clear</button>
+      </div>
+    </section>
+
+    <!-- SAVED SEQUENCES -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Sequences</h2>
+        <div class="actions quickrun">
+          <select id="seqSelect" class="text"></select>
+          <button id="quickRunBtn" class="btn primary">▶ Run</button>
+          <button id="quickStopBtn" class="btn danger">■ Stop</button>
+        </div>
+      </div>
+      <div id="saved" class="saved"></div>
+      <p id="noSaved" class="muted">Nothing saved yet.</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="app.js"></script>
+</body>
+</html>

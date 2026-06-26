@@ -1,0 +1,17 @@
+[Unit]
+Description=Artyom Robo servo web UI
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/artyom-robo
+# Optional: holds ANTHROPIC_API_KEY=... for the AI feature. Leading '-' = ok if absent.
+EnvironmentFile=-/opt/artyom-robo/.env
+ExecStart=/opt/artyom-robo/venv/bin/python /opt/artyom-robo/app.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

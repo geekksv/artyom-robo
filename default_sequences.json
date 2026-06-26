@@ -1,0 +1,56 @@
+{
+  "nod-ch0": {
+    "name": "nod-ch0",
+    "loop": false,
+    "steps": [
+      { "angles": { "0": 60 }, "move_time": 0.4, "hold": 0.3 },
+      { "angles": { "0": 120 }, "move_time": 0.4, "hold": 0.3 },
+      { "angles": { "0": 60 }, "move_time": 0.4, "hold": 0.3 },
+      { "angles": { "0": 120 }, "move_time": 0.4, "hold": 0.3 },
+      { "angles": { "0": 90 }, "move_time": 0.4, "hold": 0.2 }
+    ]
+  },
+  "shake-ch0": {
+    "name": "shake-ch0",
+    "loop": false,
+    "steps": [
+      { "angles": { "0": 70 }, "move_time": 0.12, "hold": 0.04 },
+      { "angles": { "0": 110 }, "move_time": 0.12, "hold": 0.04 },
+      { "angles": { "0": 70 }, "move_time": 0.12, "hold": 0.04 },
+      { "angles": { "0": 110 }, "move_time": 0.12, "hold": 0.04 },
+      { "angles": { "0": 70 }, "move_time": 0.12, "hold": 0.04 },
+      { "angles": { "0": 110 }, "move_time": 0.12, "hold": 0.04 },
+      { "angles": { "0": 90 }, "move_time": 0.2, "hold": 0.1 }
+    ]
+  },
+  "scan-ch0": {
+    "name": "scan-ch0",
+    "loop": false,
+    "steps": [
+      { "angles": { "0": 20 }, "move_time": 1.0, "hold": 0.5 },
+      { "angles": { "0": 160 }, "move_time": 2.4, "hold": 0.5 },
+      { "angles": { "0": 90 }, "move_time": 1.0, "hold": 0.2 }
+    ]
+  },
+  "sweep-all": {
+    "name": "sweep-all",
+    "loop": false,
+    "steps": [
+      { "angles": { "0": 0, "1": 0, "2": 0, "3": 0 }, "move_time": 0.9, "hold": 0.3 },
+      { "angles": { "0": 180, "1": 180, "2": 180, "3": 180 }, "move_time": 1.4, "hold": 0.3 },
+      { "angles": { "0": 90, "1": 90, "2": 90, "3": 90 }, "move_time": 0.9, "hold": 0.2 }
+    ]
+  },
+  "ripple": {
+    "name": "ripple",
+    "loop": false,
+    "steps": [
+      { "angles": { "0": 150 }, "move_time": 0.3, "hold": 0.1 },
+      { "angles": { "1": 150 }, "move_time": 0.3, "hold": 0.1 },
+      { "angles": { "2": 150 }, "move_time": 0.3, "hold": 0.1 },
+      { "angles": { "3": 150 }, "move_time": 0.3, "hold": 0.1 },
+      { "angles": { "0": 30, "1": 30, "2": 30, "3": 30 }, "move_time": 0.6, "hold": 0.3 },
+      { "angles": { "0": 90, "1": 90, "2": 90, "3": 90 }, "move_time": 0.5, "hold": 0.2 }
+    ]
+  }
+}

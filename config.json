@@ -1,0 +1,21 @@
+{
+  "channels": [0, 1, 2, 3],
+  "names": {
+    "0": "Servo 1",
+    "1": "Servo 2",
+    "2": "Servo 3",
+    "3": "Servo 4"
+  },
+  "min_angle": 0,
+  "max_angle": 180,
+  "start_angle": 90,
+  "min_pulse": 500,
+  "max_pulse": 2500,
+  "actuation_range": 180,
+  "port": 8000,
+  "camera_enabled": true,
+  "camera_width": 1280,
+  "camera_height": 720,
+  "camera_hflip": false,
+  "camera_vflip": false
+}

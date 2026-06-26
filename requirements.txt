@@ -1,0 +1,3 @@
+Flask>=3.0
+adafruit-circuitpython-servokit>=1.3
+anthropic>=0.40
