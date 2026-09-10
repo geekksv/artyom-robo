@@ -1,0 +1,40 @@
+[project]
+name = "artyom-robo"
+version = "1.0.0"
+description = "AI-controlled desk robot: Flask + PCA9685 servo control, natural-language motion, bilingual voice conversation, face tracking"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["venv", "docs/vendor"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "W",    # pycodestyle warnings
+    "I",    # import sorting
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "SIM",  # simplify
+]
+ignore = [
+    # The whole app is built on "if the hardware/key/binary isn't there, turn the
+    # feature off and keep serving" — a broad except is the point, and every one
+    # of them logs. Individually marked with `# noqa: BLE001` at the site.
+    "B008",
+    # Flask route handlers legitimately mutate module-level singletons.
+    "PLW0603",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Feature construction is deliberately interleaved with the imports it guards,
+# so the optional Azure engines are only imported when actually selected.
+"app.py" = ["E402"]
+"tests/*" = ["E402"]

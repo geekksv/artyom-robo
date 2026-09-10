@@ -1,3 +1,21 @@
+# Web app
 Flask>=3.0
-adafruit-circuitpython-servokit>=1.3
-anthropic>=0.40
+httpx>=0.27            # Azure Speech / AssemblyAI REST calls
+
+# AI
+anthropic>=0.40        # natural-language -> sequence, and conversation replies
+
+# Audio
+piper-tts>=1.4         # local offline TTS (only needed when tts_engine = "piper")
+
+# Vision
+opencv-python-headless>=4.8   # Haar-cascade face tracking
+numpy>=1.24                   # procedural party-music synthesis
+
+# Hardware (Raspberry Pi only — safe to omit on a laptop, the app falls back
+# to MOCK mode and the whole UI still works)
+adafruit-circuitpython-servokit>=1.3; platform_machine == "aarch64" or platform_machine == "armv7l"
+
+# The CSI camera uses picamera2, which ships with Raspberry Pi OS and is picked
+# up via `python -m venv --system-site-packages` (see deploy.ps1). It is not
+# installable from PyPI, so it is deliberately not listed here.

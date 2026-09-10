@@ -1,5 +1,19 @@
 venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Secrets — never commit
 .env
+
+# Runtime state, created on the Pi
 sequences.json
+
+# Piper voice models (~63 MB, downloaded by deploy.ps1)
+voices/
+
+# User-supplied party audio. Party mode falls back to the built-in
+# procedurally generated beat when this folder is empty.
+sounds/*
+!sounds/README.md
