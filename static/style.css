@@ -42,6 +42,31 @@ main { max-width: 880px; margin: 0 auto; padding: 20px; display: grid; gap: 18px
 .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .actions { display: flex; gap: 8px; }
 
+.top-row {
+  display: grid; gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  align-items: stretch;
+}
+.top-row .card { display: flex; flex-direction: column; }
+
+.voice-log {
+  flex: 1; min-height: 150px; max-height: 320px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;
+}
+.voice-log .vmsg { display: flex; gap: 8px; align-items: baseline; }
+.voice-log .vmsg .who {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+  flex: 0 0 auto; padding-top: 1px;
+}
+.voice-log .vmsg.heard .who { color: var(--amber); }
+.voice-log .vmsg.said .who { color: var(--accent); }
+.voice-log .vmsg .what {
+  background: var(--card2); border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 10px; color: var(--text); font-size: 14px; flex: 1;
+}
+.say-row { display: flex; gap: 8px; align-items: center; margin-top: auto; }
+.say-row .text { flex: 1; min-width: 0; }
+
 .cam-wrap {
   position: relative; width: 100%; aspect-ratio: 16 / 9;
   background: #000; border: 1px solid var(--line); border-radius: 9px;
@@ -107,12 +132,20 @@ main { max-width: 880px; margin: 0 auto; padding: 20px; display: grid; gap: 18px
 .btn.danger:hover { background: var(--red); }
 .btn.ghost { background: transparent; }
 .btn.small { padding: 5px 10px; font-size: 12px; }
+.btn.on { color: #fff; background: var(--accent2); border-color: var(--accent); }
+.btn.rec { color: #fff; background: #7a2b22; border-color: var(--red); animation: pulse 1.1s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 
 input.text, .timing input, .val {
   font: inherit; background: var(--card2); color: var(--text);
   border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px;
 }
 input.text { min-width: 160px; }
+.select {
+  font: inherit; background: var(--card2); color: var(--text);
+  border: 1px solid var(--line); border-radius: 7px; padding: 5px 8px;
+}
+.select.small { font-size: 12px; padding: 4px 7px; }
 .muted { color: var(--muted); font-size: 13px; margin: 4px 0; }
 
 .toast {
@@ -126,4 +159,25 @@ input.text { min-width: 160px; }
   .servo { grid-template-columns: 96px 1fr 56px; gap: 8px; }
   .step { grid-template-columns: 24px 1fr; }
   .step .timing, .step .x { grid-column: 2; justify-self: start; }
+}
+
+/* ---- on-screen robot ---------------------------------------------------- */
+.control-row {
+  display: grid; gap: 20px; align-items: start;
+  grid-template-columns: minmax(220px, 300px) 1fr;
+}
+@media (max-width: 700px) {
+  .control-row { grid-template-columns: 1fr; }
+}
+.robot {
+  background: linear-gradient(180deg, #12161d, #0c0f14);
+  border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px; align-self: stretch;
+}
+.robot-wrap { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+.robot-svg { width: 100%; height: auto; max-height: 340px; display: block; }
+.robot-readout {
+  font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--muted); text-align: center; letter-spacing: .3px;
+  white-space: nowrap; overflow-x: auto;
 }

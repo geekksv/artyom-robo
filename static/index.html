@@ -16,43 +16,72 @@
   </header>
 
   <main>
-    <!-- CAMERA -->
-    <section class="card" id="camCard">
-      <div class="card-head">
-        <h2>Camera</h2>
-        <div class="actions">
-          <button id="camToggle" class="btn small">Hide</button>
+    <!-- CAMERA + VOICE LOG -->
+    <div class="top-row">
+      <section class="card" id="camCard">
+        <div class="card-head">
+          <h2>Camera</h2>
+          <div class="actions">
+            <button id="camToggle" class="btn small">Hide</button>
+          </div>
         </div>
-      </div>
-      <div class="cam-wrap" id="camWrap">
-        <img id="camImg" alt="camera feed" />
-        <div id="camMsg" class="cam-msg">camera off</div>
-      </div>
-    </section>
+        <div class="cam-wrap" id="camWrap">
+          <img id="camImg" alt="camera feed" />
+          <div id="camMsg" class="cam-msg">camera off</div>
+        </div>
+      </section>
 
-    <!-- LIVE CONTROL -->
+      <section class="card hidden" id="voiceLogCard">
+        <div class="card-head">
+          <h2>Voice <span class="badge">heard / said</span></h2>
+          <div class="actions">
+            <select id="langSelect" class="select small hidden" title="speech language"></select>
+            <button id="convToggle" class="btn small hidden" title="continuous talk mode">💬 Talk: off</button>
+            <button id="wakeToggle" class="btn small hidden" title="wait for the wake word: Hello Abhishek">👂 Wake: off</button>
+            <button id="faceToggle" class="btn small hidden" title="head follows your face">🙂 Track: off</button>
+            <button id="voiceLogClear" class="btn small ghost" title="clear log">Clear</button>
+          </div>
+        </div>
+        <p id="convStatus" class="muted hidden"></p>
+        <div id="voiceLog" class="voice-log"></div>
+        <p id="voiceLogEmpty" class="muted">No speech yet. Use 🎤 Speak, or type below.</p>
+        <div class="say-row" id="sayRow">
+          <input id="sayText" class="text" placeholder="type something for the robot to say…" />
+          <button id="sayBtn" class="btn primary">🔊 Say</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- LIVE CONTROL + ROBOT -->
     <section class="card">
       <div class="card-head">
         <h2>Live control</h2>
         <div class="actions">
+          <button id="partyBtn" class="btn hidden" title="dance + party music">🎉 Party</button>
           <button id="centerBtn" class="btn">Center all</button>
           <button id="stopBtn" class="btn danger">■ Stop</button>
         </div>
       </div>
-      <div id="servos" class="servos"></div>
+      <div class="control-row">
+        <div id="robot" class="robot"></div>
+        <div id="servos" class="servos"></div>
+      </div>
     </section>
 
     <!-- AI CONTROL -->
     <section class="card hidden" id="aiCard">
       <div class="card-head">
         <h2>AI control <span class="badge">Haiku</span></h2>
+        <div class="actions">
+          <button id="voiceBtn" class="btn hidden" title="Record from the mic and transcribe">🎤 Speak</button>
+        </div>
       </div>
       <div class="ai-row">
         <input id="aiPrompt" class="text" placeholder="e.g. nod servo 1 twice, then center all" />
         <button id="aiGenBtn" class="btn">Generate</button>
         <button id="aiRunBtn" class="btn primary">Generate &amp; Run</button>
       </div>
-      <p class="muted">Describes a motion in plain English → builds a sequence below (and loads it into the builder to tweak/save).</p>
+      <p class="muted">Describe a motion in plain English (or tap <b>🎤 Speak</b> to dictate) → builds a sequence below (and loads it into the builder to tweak/save).</p>
     </section>
 
     <!-- SEQUENCE BUILDER -->
@@ -92,6 +121,7 @@
   </main>
 
   <div id="toast" class="toast hidden"></div>
+  <script src="robot.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
