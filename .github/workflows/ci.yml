@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      # The hardware libraries (ServoKit, picamera2) are deliberately absent in
+      # CI: the app falls back to MOCK mode, which is exactly the path the tests
+      # exercise and the same path a laptop takes.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flask httpx numpy pytest ruff
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        run: pytest
+
+      - name: Import the app in mock mode
+        run: python -c "import app; assert app.ctrl.mock; print('mock boot ok')"
+
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The browser demo replays the real sequences, so docs/data must not drift
+      # from the file the Raspberry Pi actually loads.
+      - name: Check the demo's sequence data is in sync
+        run: python tools/sync_demo_data.py --check
