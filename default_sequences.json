@@ -3,54 +3,520 @@
     "name": "nod-ch0",
     "loop": false,
     "steps": [
-      { "angles": { "0": 60 }, "move_time": 0.4, "hold": 0.3 },
-      { "angles": { "0": 120 }, "move_time": 0.4, "hold": 0.3 },
-      { "angles": { "0": 60 }, "move_time": 0.4, "hold": 0.3 },
-      { "angles": { "0": 120 }, "move_time": 0.4, "hold": 0.3 },
-      { "angles": { "0": 90 }, "move_time": 0.4, "hold": 0.2 }
+      {
+        "angles": {
+          "0": 60
+        },
+        "move_time": 0.4,
+        "hold": 0.3
+      },
+      {
+        "angles": {
+          "0": 120
+        },
+        "move_time": 0.4,
+        "hold": 0.3
+      },
+      {
+        "angles": {
+          "0": 60
+        },
+        "move_time": 0.4,
+        "hold": 0.3
+      },
+      {
+        "angles": {
+          "0": 120
+        },
+        "move_time": 0.4,
+        "hold": 0.3
+      },
+      {
+        "angles": {
+          "0": 90
+        },
+        "move_time": 0.4,
+        "hold": 0.2
+      }
     ]
   },
   "shake-ch0": {
     "name": "shake-ch0",
     "loop": false,
     "steps": [
-      { "angles": { "0": 70 }, "move_time": 0.12, "hold": 0.04 },
-      { "angles": { "0": 110 }, "move_time": 0.12, "hold": 0.04 },
-      { "angles": { "0": 70 }, "move_time": 0.12, "hold": 0.04 },
-      { "angles": { "0": 110 }, "move_time": 0.12, "hold": 0.04 },
-      { "angles": { "0": 70 }, "move_time": 0.12, "hold": 0.04 },
-      { "angles": { "0": 110 }, "move_time": 0.12, "hold": 0.04 },
-      { "angles": { "0": 90 }, "move_time": 0.2, "hold": 0.1 }
+      {
+        "angles": {
+          "0": 70
+        },
+        "move_time": 0.12,
+        "hold": 0.04
+      },
+      {
+        "angles": {
+          "0": 110
+        },
+        "move_time": 0.12,
+        "hold": 0.04
+      },
+      {
+        "angles": {
+          "0": 70
+        },
+        "move_time": 0.12,
+        "hold": 0.04
+      },
+      {
+        "angles": {
+          "0": 110
+        },
+        "move_time": 0.12,
+        "hold": 0.04
+      },
+      {
+        "angles": {
+          "0": 70
+        },
+        "move_time": 0.12,
+        "hold": 0.04
+      },
+      {
+        "angles": {
+          "0": 110
+        },
+        "move_time": 0.12,
+        "hold": 0.04
+      },
+      {
+        "angles": {
+          "0": 90
+        },
+        "move_time": 0.2,
+        "hold": 0.1
+      }
     ]
   },
   "scan-ch0": {
     "name": "scan-ch0",
     "loop": false,
     "steps": [
-      { "angles": { "0": 20 }, "move_time": 1.0, "hold": 0.5 },
-      { "angles": { "0": 160 }, "move_time": 2.4, "hold": 0.5 },
-      { "angles": { "0": 90 }, "move_time": 1.0, "hold": 0.2 }
+      {
+        "angles": {
+          "0": 20
+        },
+        "move_time": 1.0,
+        "hold": 0.5
+      },
+      {
+        "angles": {
+          "0": 160
+        },
+        "move_time": 2.4,
+        "hold": 0.5
+      },
+      {
+        "angles": {
+          "0": 90
+        },
+        "move_time": 1.0,
+        "hold": 0.2
+      }
+    ]
+  },
+  "wave-right": {
+    "name": "wave-right",
+    "loop": false,
+    "steps": [
+      {
+        "angles": {
+          "1": 150,
+          "2": 120
+        },
+        "move_time": 0.4,
+        "hold": 0.1
+      },
+      {
+        "angles": {
+          "2": 160
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "2": 110
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "2": 160
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "2": 110
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "1": 90,
+          "2": 90
+        },
+        "move_time": 0.4,
+        "hold": 0.2
+      }
+    ]
+  },
+  "wave-left": {
+    "name": "wave-left",
+    "loop": false,
+    "steps": [
+      {
+        "angles": {
+          "3": 150,
+          "4": 120
+        },
+        "move_time": 0.4,
+        "hold": 0.1
+      },
+      {
+        "angles": {
+          "4": 160
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "4": 110
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "4": 160
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "4": 110
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "3": 90,
+          "4": 90
+        },
+        "move_time": 0.4,
+        "hold": 0.2
+      }
     ]
   },
   "sweep-all": {
     "name": "sweep-all",
     "loop": false,
     "steps": [
-      { "angles": { "0": 0, "1": 0, "2": 0, "3": 0 }, "move_time": 0.9, "hold": 0.3 },
-      { "angles": { "0": 180, "1": 180, "2": 180, "3": 180 }, "move_time": 1.4, "hold": 0.3 },
-      { "angles": { "0": 90, "1": 90, "2": 90, "3": 90 }, "move_time": 0.9, "hold": 0.2 }
+      {
+        "angles": {
+          "0": 20,
+          "1": 40,
+          "2": 75,
+          "3": 40,
+          "4": 75
+        },
+        "move_time": 0.9,
+        "hold": 0.3
+      },
+      {
+        "angles": {
+          "0": 160,
+          "1": 170,
+          "2": 170,
+          "3": 170,
+          "4": 170
+        },
+        "move_time": 1.4,
+        "hold": 0.3
+      },
+      {
+        "angles": {
+          "0": 90,
+          "1": 90,
+          "2": 90,
+          "3": 90,
+          "4": 90
+        },
+        "move_time": 0.9,
+        "hold": 0.2
+      }
     ]
   },
   "ripple": {
     "name": "ripple",
     "loop": false,
     "steps": [
-      { "angles": { "0": 150 }, "move_time": 0.3, "hold": 0.1 },
-      { "angles": { "1": 150 }, "move_time": 0.3, "hold": 0.1 },
-      { "angles": { "2": 150 }, "move_time": 0.3, "hold": 0.1 },
-      { "angles": { "3": 150 }, "move_time": 0.3, "hold": 0.1 },
-      { "angles": { "0": 30, "1": 30, "2": 30, "3": 30 }, "move_time": 0.6, "hold": 0.3 },
-      { "angles": { "0": 90, "1": 90, "2": 90, "3": 90 }, "move_time": 0.5, "hold": 0.2 }
+      {
+        "angles": {
+          "0": 150
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "1": 150
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "2": 150
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "3": 150
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "4": 150
+        },
+        "move_time": 0.25,
+        "hold": 0.08
+      },
+      {
+        "angles": {
+          "0": 90,
+          "1": 90,
+          "2": 90,
+          "3": 90,
+          "4": 90
+        },
+        "move_time": 0.5,
+        "hold": 0.2
+      }
+    ]
+  },
+  "dance-wave": {
+    "name": "dance-wave",
+    "loop": true,
+    "steps": [
+      {
+        "angles": {
+          "0": 60,
+          "1": 150,
+          "2": 150,
+          "3": 45,
+          "4": 90
+        },
+        "move_time": 0.35,
+        "hold": 0.1
+      },
+      {
+        "angles": {
+          "0": 120,
+          "1": 45,
+          "2": 90,
+          "3": 150,
+          "4": 150
+        },
+        "move_time": 0.35,
+        "hold": 0.1
+      }
+    ]
+  },
+  "dance-bounce": {
+    "name": "dance-bounce",
+    "loop": true,
+    "steps": [
+      {
+        "angles": {
+          "0": 70,
+          "1": 150,
+          "2": 150,
+          "3": 150,
+          "4": 150
+        },
+        "move_time": 0.25,
+        "hold": 0.06
+      },
+      {
+        "angles": {
+          "0": 110,
+          "1": 45,
+          "2": 90,
+          "3": 45,
+          "4": 90
+        },
+        "move_time": 0.25,
+        "hold": 0.06
+      }
+    ]
+  },
+  "dance-robot": {
+    "name": "dance-robot",
+    "loop": true,
+    "steps": [
+      {
+        "angles": {
+          "0": 135,
+          "1": 150,
+          "2": 120,
+          "3": 90,
+          "4": 90
+        },
+        "move_time": 0.18,
+        "hold": 0.18
+      },
+      {
+        "angles": {
+          "0": 135,
+          "1": 90,
+          "2": 90,
+          "3": 150,
+          "4": 120
+        },
+        "move_time": 0.18,
+        "hold": 0.18
+      },
+      {
+        "angles": {
+          "0": 45,
+          "1": 150,
+          "2": 120,
+          "3": 90,
+          "4": 90
+        },
+        "move_time": 0.18,
+        "hold": 0.18
+      },
+      {
+        "angles": {
+          "0": 45,
+          "1": 90,
+          "2": 90,
+          "3": 150,
+          "4": 120
+        },
+        "move_time": 0.18,
+        "hold": 0.18
+      }
+    ]
+  },
+  "dance-disco": {
+    "name": "dance-disco",
+    "loop": true,
+    "steps": [
+      {
+        "angles": {
+          "0": 60,
+          "1": 160,
+          "2": 160,
+          "3": 45,
+          "4": 80
+        },
+        "move_time": 0.35,
+        "hold": 0.18
+      },
+      {
+        "angles": {
+          "0": 120,
+          "1": 45,
+          "2": 80,
+          "3": 160,
+          "4": 160
+        },
+        "move_time": 0.35,
+        "hold": 0.18
+      }
+    ]
+  },
+  "dance-finale": {
+    "name": "dance-finale",
+    "loop": false,
+    "steps": [
+      {
+        "angles": {
+          "0": 90,
+          "1": 90,
+          "2": 90,
+          "3": 90,
+          "4": 90
+        },
+        "move_time": 0.3,
+        "hold": 0.2
+      },
+      {
+        "angles": {
+          "0": 70,
+          "1": 160,
+          "2": 160,
+          "3": 160,
+          "4": 160
+        },
+        "move_time": 0.3,
+        "hold": 0.15
+      },
+      {
+        "angles": {
+          "0": 110,
+          "1": 45,
+          "2": 90,
+          "3": 45,
+          "4": 90
+        },
+        "move_time": 0.3,
+        "hold": 0.15
+      },
+      {
+        "angles": {
+          "0": 70,
+          "1": 160,
+          "2": 160,
+          "3": 160,
+          "4": 160
+        },
+        "move_time": 0.3,
+        "hold": 0.15
+      },
+      {
+        "angles": {
+          "0": 140,
+          "1": 45,
+          "2": 90,
+          "3": 45,
+          "4": 90
+        },
+        "move_time": 0.7,
+        "hold": 0.7
+      },
+      {
+        "angles": {
+          "0": 90,
+          "1": 90,
+          "2": 90,
+          "3": 90,
+          "4": 90
+        },
+        "move_time": 0.5,
+        "hold": 0.2
+      }
     ]
   }
 }
