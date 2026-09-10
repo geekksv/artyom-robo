@@ -5,11 +5,16 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+# Runs as root for I2C (/dev/i2c-1) and camera access. This is a LAN-only
+# appliance with no authentication - do not expose port 8000 to the internet.
 User=root
 WorkingDirectory=/opt/artyom-robo
-# Optional: holds ANTHROPIC_API_KEY=... for the AI feature. Leading '-' = ok if absent.
+# Optional: API keys for the AI / speech features. Leading '-' = ok if absent.
 EnvironmentFile=-/opt/artyom-robo/.env
 ExecStart=/opt/artyom-robo/venv/bin/python /opt/artyom-robo/app.py
+# For a production WSGI server instead of Flask's dev server:
+#   /opt/artyom-robo/venv/bin/pip install waitress
+#   ExecStart=/opt/artyom-robo/venv/bin/waitress-serve --listen=0.0.0.0:8000 app:app
 Restart=on-failure
 RestartSec=2
 
