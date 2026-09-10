@@ -1,17 +1,30 @@
 <div align="center">
 
+<img src="docs/media/robot-finished.jpg" alt="Artyom, a cardboard desk robot dressed in a shirt and tie" width="300">
+
 # Artyom Robo
 
-**A cardboard desk robot that listens, talks back in Hindi or English, watches you, and dances.**
-Raspberry Pi · PCA9685 · Flask · Claude · Azure Speech · OpenCV
+**A cardboard desk robot that listens, talks back in Hindi or English,
+watches you, and dances.**
+
+Raspberry&nbsp;Pi · PCA9685 · Flask · Claude · Azure&nbsp;Speech · OpenCV
 
 [![CI](https://github.com/geekksv/artyom-robo/actions/workflows/ci.yml/badge.svg)](https://github.com/geekksv/artyom-robo/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Live demo](https://img.shields.io/badge/demo-try%20it%20in%20your%20browser-4f9dff)](https://geekksv.github.io/artyom-robo/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776ab.svg)](pyproject.toml)
 
-### ▶ **[Try it in your browser — no hardware needed](https://geekksv.github.io/artyom-robo/)**
+<br>
 
-<img src="docs/media/robot-finished.jpg" alt="The finished robot, dressed in a shirt and tie" width="380">
+## ▶&nbsp; [**Try it in your browser**](https://geekksv.github.io/artyom-robo/)
+
+*Drives an on-screen robot with the project's own code — no Raspberry Pi, no API key,
+nothing to install.*
+
+<br>
+
+<img src="docs/media/robot-team.jpg" alt="Artyom on demo day, with the people who built it" width="560">
+
+<sub>Demo day. The robot is five servos, two cardboard boxes and a Raspberry Pi.</sub>
 
 </div>
 
@@ -20,7 +33,7 @@ Raspberry Pi · PCA9685 · Flask · Claude · Azure Speech · OpenCV
 ## What it is
 
 A proof-of-concept humanoid built out of cardboard boxes and five hobby servos, driven
-by a Flask app on a Raspberry Pi. You can talk to it and it talks back — in the same
+by a Flask app on a Raspberry Pi. You can talk to it and it talks back — in whichever
 language you used — while its arms gesture in time with what it is saying. It follows
 your face with its head. Ask it to dance and it does, with music.
 
@@ -35,34 +48,16 @@ explained below, and both run live in the browser demo.
 <td width="50%"><img src="docs/media/robot-control.jpg" alt="Driving the robot from the web UI on a tablet"></td>
 </tr>
 <tr>
-<td align="center"><em>Head on a pan servo, two box arms, camera at the neck</em></td>
-<td align="center"><em>The whole thing is driven from a browser on the same network</em></td>
+<td align="center"><sub><em>Head on a pan servo, two box arms, camera at the neck</em></sub></td>
+<td align="center"><sub><em>Driven from a browser on the same network</em></sub></td>
 </tr>
 </table>
 
 ---
 
-## Try it without a Raspberry Pi
-
-**[geekksv.github.io/artyom-robo](https://geekksv.github.io/artyom-robo/)** — an on-screen
-robot driven by the project's own code. It loads the real `default_sequences.json`, runs a
-JS port of the same 20 ms easing loop, generates gestures with the same algorithm, and
-synthesizes the same party beat in WebAudio. Nothing is faked and nothing is downloaded.
-
-Or run the actual app on your laptop — the hardware libraries are optional, and without
-them the controller drops into **MOCK** mode with the full UI intact:
-
-```bash
-git clone https://github.com/geekksv/artyom-robo && cd artyom-robo
-pip install flask httpx numpy
-python app.py            # → http://localhost:8000
-```
-
----
-
 ## What it does
 
-| | |
+|  | |
 |---|---|
 | **Live servo control** | Sliders per channel, with an on-screen robot mirroring the hardware in real time. |
 | **Sequence builder** | Pose the robot, capture the pose as a step, set `move_time` / `hold`, save it by name. 12 sequences ship built in. |
@@ -78,107 +73,34 @@ hides that panel. The app always starts.
 
 ---
 
-## How it works
+## Run it
 
-```mermaid
-flowchart TB
-    UI["Web UI<br/><i>sliders · builder · voice log · SVG robot</i>"]
-    API["Flask API<br/><i>app.py</i>"]
-    UI <-->|"JSON · MJPEG"| API
+**In a browser** — [geekksv.github.io/artyom-robo](https://geekksv.github.io/artyom-robo/).
+Loads the real `default_sequences.json`, runs a JS port of the same 20 ms easing loop,
+generates gestures with the same algorithm, and synthesizes the same party beat in
+WebAudio. Nothing is faked and nothing is downloaded.
 
-    API --> SERVO["servo.py<br/><i>Controller + Runner</i>"]
-    API --> CONV["conversation.py<br/><i>listen → reply → speak</i>"]
-    API --> VIS["vision.py<br/><i>Haar face tracking</i>"]
-    API --> MUS["music.py<br/><i>party audio</i>"]
+**On your laptop** — the hardware libraries are optional. Without them the controller
+drops into MOCK mode with the full UI intact:
 
-    CONV --> STT["Azure STT<br/>/ AssemblyAI"]
-    CONV --> LLM["llm.py<br/><i>Claude Haiku</i>"]
-    CONV --> TTS["Azure TTS<br/>/ Piper (offline)"]
-    CONV -->|gesture keyframes| SERVO
-    VIS -->|head pan| SERVO
-    VIS --> CAM["camera.py<br/><i>picamera2</i>"]
-
-    SERVO -->|I²C| PCA["PCA9685 → 5 servos"]
-    TTS -->|PipeWire| SPK["Bluetooth speaker"]
+```bash
+git clone https://github.com/geekksv/artyom-robo && cd artyom-robo
+pip install flask httpx numpy
+python app.py            # → http://localhost:8000
 ```
 
-### Gestures are derived from the sentence, not randomised
+**On the Pi** — `./deploy.ps1` copies everything to `/opt/artyom-robo`, builds a venv
+with `--system-site-packages` so `picamera2` and `ServoKit` come from the OS, and
+restarts the systemd unit.
 
-The obvious way to make a robot "talk with its hands" is a random wiggle loop. That reads
-as noise. Instead, `talk_keyframes()` builds a timeline from the reply text itself:
+<details>
+<summary><b>Deployment details, API keys and speech engines</b> — what to install on the Pi, and which keys unlock which feature</summary>
 
-- one beat per word, spread evenly across the measured audio duration, so gestures track
-  the rhythm of speech
-- amplitude grows with word length — longer, more emphatic words get bigger beats
-- `!` and `?` are *strong*: every arm is thrown, not just the leading one
-- commas and semicolons produce a brief partial settle
-- full stops relax to rest and **swap which arm leads**, so consecutive sentences don't
-  look mechanical
-
-The audio is synthesized to a file first so its exact duration is known, then playback and
-the gesture timeline start together — offset by a configurable `gesture_delay` that
-compensates for `pw-play` startup and Bluetooth A2DP latency. Get that wrong and the robot
-gesticulates a half-second ahead of its own voice.
-
-```python
-keys = talk_keyframes(reply, duration, arms)   # [(t_seconds, {channel: angle}), ...]
-```
-
-It is deterministic, so it is unit-tested — and the browser demo runs the same algorithm,
-which is the fastest way to see what it actually looks like.
-
-### The LLM cannot emit an unrunnable sequence
-
-`llm.py` builds a JSON schema **from the live channel list** — one required integer per
-`chN`, plus `move_time` and `hold`, with `additionalProperties: false` — and passes it as a
-structured-output constraint. There is no parsing, no retry loop, and no "the model
-returned prose today" failure mode. Change `channels` in `config.json` and the schema, the
-system prompt and the validation all follow.
-
-### Three transforms sit between a command and a servo
-
-`Controller.set_angle()` is the only path to the hardware, and it applies, in order:
-
-1. **`limits`** — per-channel safe travel, so a shoulder can't drive into a hard stop
-2. **`invert`** — mirror-mounted channels get `180 − angle`, so one logical command moves
-   both arms the same visual direction
-3. **`park_channels`** — a continuous-rotation servo can't hold an angle at all (90 means
-   *stopped*, anything else means *spin*), so it is pinned to neutral
-
----
-
-## Hardware
-
-| Part | Notes |
-|---|---|
-| Raspberry Pi | I²C enabled on bus 1 |
-| PCA9685 16-channel PWM board | at `0x40`, separate supply on the V+ rail |
-| 5 × Deao digital servos (20 kg / 40 kg) | DC 4.8–7.4 V |
-| 5 V 40 A SMPS | servos draw far more than the Pi can supply |
-| CSI camera | mounted at the neck |
-| USB microphone | any ALSA capture device |
-| Bluetooth speaker | classic A2DP, paired and trusted once |
-| Cardboard, glue, marker pens | the chassis |
-
-A CCPM servo tester is worth having to find each servo's real travel before wiring, so
-`min_pulse` / `max_pulse` can be narrowed if a servo buzzes at the extremes.
-
-Servo channels: `0` head pan · `1`/`2` right shoulder + elbow · `3`/`4` left shoulder + elbow.
-
----
-
-## Running it on the Pi
+<br>
 
 ```powershell
 ./deploy.ps1                              # or: ./deploy.ps1 -Target root@192.168.1.20
-```
-
-Copies the app to `/opt/artyom-robo`, creates a venv with `--system-site-packages` (so
-`picamera2` and `ServoKit` come from the OS), installs requirements, downloads the Piper
-voice if needed, opens port 8000, and restarts the systemd unit.
-
-```bash
-ssh pi journalctl -u artyom-robo -f
+ssh pi journalctl -u artyom-robo -f       # follow the logs
 ```
 
 System packages the Pi needs: `alsa-utils` (`arecord`), `pipewire` (`pw-play`), and
@@ -208,13 +130,112 @@ Both speech layers are swappable behind one interface, chosen in `config.json`:
 | `tts_engine` | Azure Neural voices, multilingual | `"piper"` — fully local and offline |
 | `stt_engine` | Azure short-audio recognition | `"assemblyai"` |
 
-The reply voice is chosen by **script detection**, not by the dropdown: a reply containing
-Devanagari is spoken by a Hindi voice even when the UI is set to English, so a code-mixed
-conversation sounds right.
+The reply voice is chosen by **script detection**, not by the dropdown: a reply
+containing Devanagari is spoken by a Hindi voice even when the UI is set to English,
+so a code-mixed conversation sounds right.
+
+</details>
 
 ---
 
-## Configuration
+## How it works
+
+```mermaid
+flowchart TB
+    UI["Web UI<br/><i>sliders · builder · voice log · SVG robot</i>"]
+    API["Flask API<br/><i>app.py</i>"]
+    UI <-->|"JSON · MJPEG"| API
+
+    API --> SERVO["servo.py<br/><i>Controller + Runner</i>"]
+    API --> CONV["conversation.py<br/><i>listen → reply → speak</i>"]
+    API --> VIS["vision.py<br/><i>Haar face tracking</i>"]
+    API --> MUS["music.py<br/><i>party audio</i>"]
+
+    CONV --> STT["Azure STT<br/>/ AssemblyAI"]
+    CONV --> LLM["llm.py<br/><i>Claude Haiku</i>"]
+    CONV --> TTS["Azure TTS<br/>/ Piper (offline)"]
+    CONV -->|gesture keyframes| SERVO
+    VIS -->|head pan| SERVO
+    VIS --> CAM["camera.py<br/><i>picamera2</i>"]
+
+    SERVO -->|I²C| PCA["PCA9685 → 5 servos"]
+    TTS -->|PipeWire| SPK["Bluetooth speaker"]
+```
+
+### Gestures come from the sentence, not from a random wiggle
+
+The obvious way to make a robot "talk with its hands" is a random loop. That reads as
+noise. Instead, `talk_keyframes()` builds a timeline from the reply text itself:
+
+- one beat per word, spread across the measured audio duration, so gestures track the
+  rhythm of speech
+- amplitude grows with word length — longer, more emphatic words get bigger beats
+- `!` and `?` are *strong*: every arm is thrown, not just the leading one
+- commas and semicolons produce a brief partial settle
+- full stops relax to rest and **swap which arm leads**, so consecutive sentences don't
+  look mechanical
+
+```python
+keys = talk_keyframes(reply, duration, arms)   # [(t_seconds, {channel: angle}), ...]
+```
+
+The audio is synthesized to a file first so its exact duration is known, then playback
+and the gesture timeline start together — offset by a configurable `gesture_delay` that
+compensates for `pw-play` startup and Bluetooth A2DP latency. Get that wrong and the
+robot gesticulates half a second ahead of its own voice.
+
+It is deterministic, so it is unit-tested. The browser demo runs the same function —
+type *"Wow! Really? Yes, absolutely incredible."* and watch both arms fire on the
+punctuation, then the lead swap after the full stop.
+
+### The LLM cannot emit an unrunnable sequence
+
+`llm.py` builds a JSON schema **from the live channel list** — one required integer per
+`chN`, plus `move_time` and `hold`, with `additionalProperties: false` — and passes it
+as a structured-output constraint. There is no parsing, no retry loop, and no "the
+model returned prose today" failure mode. Change `channels` in `config.json` and the
+schema, the system prompt and the validation all follow.
+
+### Three transforms sit between a command and a servo
+
+`Controller.set_angle()` is the only path to the hardware, and it applies, in order:
+
+1. **`limits`** — per-channel safe travel, so a shoulder can't drive into a hard stop
+2. **`invert`** — mirror-mounted channels get `180 − angle`, so one logical command
+   moves both arms the same visual direction
+3. **`park_channels`** — a continuous-rotation servo can't hold an angle at all (90
+   means *stopped*, anything else means *spin*), so it is pinned to neutral
+
+---
+
+## Hardware
+
+| Part | Notes |
+|---|---|
+| Raspberry Pi | I²C enabled on bus 1 |
+| PCA9685 16-channel PWM board | at `0x40`, separate supply on the V+ rail |
+| 5 × Deao digital servos (20 kg / 40 kg) | DC 4.8–7.4 V |
+| 5 V 40 A SMPS | servos draw far more than the Pi can supply |
+| CSI camera | mounted at the neck |
+| USB microphone | any ALSA capture device |
+| Bluetooth speaker | classic A2DP, paired and trusted once |
+| Cardboard, glue, marker pens | the chassis |
+
+Channels: `0` head pan · `1`/`2` right shoulder + elbow · `3`/`4` left shoulder + elbow.
+The arms are flat panels hinged at the top corners of the torso, so they lift forward
+and up — there is no sideways travel.
+
+A CCPM servo tester is worth having to find each servo's real travel before wiring, so
+`min_pulse` / `max_pulse` can be narrowed if a servo buzzes at the extremes.
+
+---
+
+## Reference
+
+<details>
+<summary><b>Configuration</b> — every <code>config.json</code> key and what it controls</summary>
+
+<br>
 
 Everything hardware-shaped lives in [`config.json`](config.json).
 
@@ -232,12 +253,16 @@ Everything hardware-shaped lives in [`config.json`](config.json).
 | `face_track_gain`, `face_track_deadzone` | head-tracking control loop |
 | `party_dances`, `party_dance_seconds` | which sequences party mode picks from |
 
-Inconsistent config is reported at startup rather than failing silently — for example, a
-channel that is both parked and listed in `arms` would drop every gesture written to it.
+Inconsistent config is reported at startup rather than failing silently — for example,
+a channel that is both parked and listed in `arms` would drop every gesture written to
+it.
 
----
+</details>
 
-## API
+<details>
+<summary><b>HTTP API</b> — all 19 routes</summary>
+
+<br>
 
 | Method | Path | Body / effect |
 |---|---|---|
@@ -261,9 +286,12 @@ channel that is both parked and listed in `arms` would drop every gesture writte
 | `GET` | `/camera/stream` | MJPEG stream |
 | `GET` | `/camera/snapshot` | single JPEG |
 
----
+</details>
 
-## Development
+<details>
+<summary><b>Development</b> — tests, linting and the repository layout</summary>
+
+<br>
 
 ```bash
 pip install -r requirements-dev.txt
@@ -274,8 +302,8 @@ python tools/sync_demo_data.py      # refresh the browser demo's copy of the rea
 
 The tests run with no hardware attached — the same MOCK path a laptop takes — and cover
 the angle transforms, sequence interpolation, the gesture timeline, multilingual intent
-matching and the LLM schema. CI runs them on Python 3.11–3.13 and verifies the demo's data
-hasn't drifted from the robot's.
+matching and the LLM schema. CI runs them on Python 3.11–3.13 and verifies the demo's
+data hasn't drifted from the robot's.
 
 ```
 app.py                 Flask API + feature wiring
@@ -291,27 +319,33 @@ static/                the web UI, and robot.js — the SVG robot
 docs/                  the browser demo (GitHub Pages)
 ```
 
+</details>
+
 ---
 
 ## Limitations, honestly
 
 - **Speech is turn-based, not streaming.** The mic records a fixed 4-second clip, then
   stops to think. You cannot interrupt the robot mid-sentence, and short answers still
-  wait out the window. Streaming STT with barge-in is the single biggest improvement left.
-- **Four subsystems write to the same servo bus.** The sequence runner, the face tracker
-  and the gesture loop are coordinated by explicit hand-offs (a sequence that pans the head
-  borrows it from the tracker and gives it back). A proper priority-based arbiter would be
-  cleaner than hand-offs at each call site.
-- **Wake-word detection is cloud-side**, so wake mode round-trips every 4-second clip to
-  Azure just to check for one phrase. An on-device wake word (openWakeWord, Porcupine)
-  would cut both cost and latency.
-- **No authentication, and it runs as root** on the Flask development server. That is a
-  deliberate choice for a LAN-only appliance that needs I²C and PipeWire access — but it
-  is not something to expose to the internet.
-- **Head tracking is pan-only.** One servo, so it follows left/right and ignores height.
+  wait out the window. Streaming STT with barge-in is the single biggest improvement
+  left.
+- **Four subsystems write to the same servo bus.** The sequence runner, the face
+  tracker and the gesture loop are coordinated by explicit hand-offs — a sequence that
+  pans the head borrows it from the tracker and gives it back. A priority-based arbiter
+  would be cleaner than hand-offs at each call site.
+- **Wake-word detection is cloud-side**, so wake mode round-trips every 4-second clip
+  to Azure just to check for one phrase. An on-device wake word (openWakeWord,
+  Porcupine) would cut both cost and latency.
+- **No authentication, and it runs as root** on the Flask development server. A
+  deliberate choice for a LAN-only appliance that needs I²C and PipeWire access — but
+  not something to expose to the internet.
+- **Head tracking is pan-only.** One servo, so it follows left/right and ignores
+  height.
 
 ---
 
-## License
+<div align="center">
 
-[MIT](LICENSE)
+[MIT](LICENSE) · built by [geekksv](https://github.com/geekksv)
+
+</div>
