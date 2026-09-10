@@ -12,9 +12,10 @@
  * browser demo, where it is the only robot there is.
  *
  * Angle convention matches the hardware: 90 is neutral. A shoulder at 90 hangs
- * straight down; raising the angle lifts the arm outward. Channels listed in
- * `invert` are mirror-mounted on the real robot, so they are mirrored here too
- * and one logical command moves both arms the same visual direction.
+ * straight down against the side of the torso; raising the angle lifts the arm
+ * FORWARD and up. The arms have no sideways travel and cannot go behind the
+ * body - see elevation() and limb() for how that is drawn in a view
+ * that has no depth to work with.
  */
 (function (global) {
   const SVG = "http://www.w3.org/2000/svg";
@@ -48,11 +49,10 @@
     // One arm = a shoulder pivot, an upper segment, an elbow pivot, a forearm.
     // Left/right differ only in which side of the torso they hang from and
     // which way a raise rotates.
-    // `dir` is which way a raise rotates. SVG rotate() is clockwise, and a limb
-    // segment is drawn pointing down (+y), so rotate(+90) swings it to the left.
-    // The arm on the viewer's left therefore raises with +1, its mirror with -1;
-    // getting this backwards folds both arms across the chest.
-    // Segment lengths are chosen so a full 180 raise stays inside the viewBox.
+    // `dir` tips each arm away from the body's centre line as it rises, so the
+    // two arms fan apart slightly instead of overlapping the tie. Mirror-mounted
+    // channels need no special case here: both arms raise forward together,
+    // which is exactly what `invert` achieves on the hardware.
     static get LAYOUT() {
       return {
         neck: { x: 200, y: 168 },
@@ -63,6 +63,62 @@
         upper: 62,
         fore: 54,
         hand: 14,
+      };
+    }
+
+    // -- projecting a forward raise onto a front view -----------------------
+    // The real arms are flat panels hinged at the top corners of the torso: they
+    // lift forward and up, then come back down. There is no sideways travel and
+    // nothing goes behind the body.
+    //
+    // A dead-on front view can't show motion coming toward the viewer, so the
+    // raise is projected: a little of it becomes rotation in the picture plane
+    // (the hand arcs up and slightly out) and the rest becomes foreshortening
+    // (the limb shortens as it points at you). Rotating by the full angle
+    // instead would draw a sideways arm the hardware cannot produce.
+
+    // How far off the front axis the arms are drawn from. The torso and face are
+    // dead-on, but the limbs get a slight three-quarter camera - just enough for
+    // a raise coming toward the viewer to be legible as motion.
+    static get VIEW_SKEW() { return Math.sin((28 * Math.PI) / 180); }
+
+    // Ceiling on a single joint's contribution. Shoulder and elbow compound, so
+    // an "arm up" pose (dance-disco holds ch1 and ch2 both at 160) still clears
+    // horizontal and puts the hand above the shoulder, which is the whole point
+    // of that pose - while neither joint alone can fling a limb past vertical.
+    static get MAX_LIFT() { return 80; }
+
+    /** Servo angle -> degrees of forward elevation. 90 = hanging straight down. */
+    static elevation(angle, neutral) {
+      const d = angle - neutral;
+      // Below neutral the arm is already resting against the body, so travel
+      // there barely shows - but every dance alternates 45 with ~160, and
+      // flattening the low half would cost half the visible swing. A shallow
+      // slope keeps those poses distinct without ever reading as a backswing.
+      return d >= 0
+        ? Math.min(ArtyomRobot.MAX_LIFT, d * 0.85)
+        : Math.max(-14, d * 0.28);
+    }
+
+    /** Elevation -> an SVG transform for one limb segment.
+     *
+     * Projects the arm's real direction through the three-quarter camera. The
+     * limb points straight down the -y axis, so in the robot's own frame a raise
+     * of `deg` splits into a downward component cos(deg) and a forward component
+     * sin(deg); the camera turns that forward component into a small sideways
+     * offset. What survives is the on-screen angle and how much of the limb's
+     * length is still facing us.
+     */
+    static limb(deg, dir) {
+      const rad = (deg * Math.PI) / 180;
+      const down = Math.cos(rad);
+      const out = Math.sin(rad) * ArtyomRobot.VIEW_SKEW;
+      const swing = ((Math.atan2(out, down) * 180) / Math.PI) * dir;
+      const foreshorten = Math.hypot(down, out);
+      return {
+        swing,
+        foreshorten,
+        transform: `rotate(${swing.toFixed(2)}) scale(1 ${foreshorten.toFixed(3)})`,
       };
     }
 
@@ -118,7 +174,11 @@
         x: "147", y: "350", width: "106", height: "15",
         fill: "#2b2b2b", opacity: "0.85",
       }));
-      // --- arms (added before the torso so the joints tuck behind the body) -------------------------------------------------------------
+      // --- arms -------------------------------------------------------------
+      // Drawn in front of the torso: a forward raise passes over the chest.
+      // The shoulder pivots sit just outside the torso silhouette, so at rest
+      // the arms still hang flush against the sides.
+      scene.appendChild(torso);
       this.parts.arms = (this.opts.arms || []).map((pair, i) => {
         const side = L.shoulders[i] || L.shoulders[L.shoulders.length - 1];
         const shoulderG = el("g");
@@ -131,23 +191,26 @@
         const joint = el("circle", { r: 7, fill: "#2b3440", stroke: "#6f7d8c", "stroke-width": "2" });
 
         shoulderG.appendChild(seg(L.upper, 24));
-        elbowG.setAttribute("transform", `translate(0 ${L.upper})`);
         elbowG.appendChild(seg(L.fore, 20));
         elbowG.appendChild(el("rect", {                     // hand
           x: -11, y: L.fore, width: 22, height: L.hand, rx: 4,
           fill: "#f0e6d2", stroke: "#c2b295", "stroke-width": "2",
         }));
-        shoulderG.appendChild(elbowG);
 
+        // The forearm is a *sibling* of the upper arm, not a child. Nesting it
+        // would rotate it inside the upper arm's foreshortening scale, and
+        // rotating within a non-uniformly scaled frame skews the angle - the
+        // forearm ended up folding down when it should have carried on lifting.
+        // Instead setAngles() walks the upper arm to find where the elbow landed
+        // and places the forearm there itself.
         const root = el("g", { transform: `translate(${side.x} ${side.y})` });
         root.appendChild(shoulderG);
+        root.appendChild(elbowG);
         root.appendChild(joint);
         scene.appendChild(root);
 
         return { shoulderG, elbowG, side, shoulder: pair[0], elbow: pair[1] };
       });
-
-      scene.appendChild(torso);
 
       // --- head (drawn last so it sits above the shoulders) -----------------
       const headG = el("g");
@@ -228,17 +291,29 @@
         "transform", `translate(${dx.toFixed(2)} 0) rotate(${(pan * 3).toFixed(2)} 200 190)`);
       this.parts.eyes.setAttribute("transform", `translate(${(dx * 0.32).toFixed(2)} 0)`);
 
+      const L = ArtyomRobot.LAYOUT;
       for (const arm of this.parts.arms) {
-        const flip = this.invert.has(arm.shoulder) ? -1 : 1;
-        const rot = (at(arm.shoulder) - n) * arm.side.dir * flip;
-        arm.shoulderG.setAttribute("transform", `rotate(${rot.toFixed(2)})`);
+        const lift = ArtyomRobot.elevation(at(arm.shoulder), n);
+        const upper = ArtyomRobot.limb(lift, arm.side.dir);
+        arm.shoulderG.setAttribute("transform", upper.transform);
 
-        if (arm.elbow !== undefined) {
-          const eFlip = this.invert.has(arm.elbow) ? -1 : 1;
-          const eRot = (at(arm.elbow) - n) * arm.side.dir * eFlip;
-          arm.elbowG.setAttribute(
-            "transform", `translate(0 ${ArtyomRobot.LAYOUT.upper}) rotate(${eRot.toFixed(2)})`);
-        }
+        // Lifts add up along the limb. The sequences treat a high elbow as
+        // "carry on lifting", not as a curl - dance-disco raises ch1 and ch2
+        // together to throw one arm overhead - so the forearm's elevation is the
+        // shoulder's plus its own. An arm with no elbow channel (the left one,
+        // whose elbow servo is parked) stays rigid: the forearm just inherits
+        // the shoulder's elevation.
+        const bend = arm.elbow === undefined
+          ? 0
+          : ArtyomRobot.elevation(at(arm.elbow), n) * 0.9;
+        const fore = ArtyomRobot.limb(lift + bend, arm.side.dir);
+        // Walk down the upper arm to wherever it actually put the elbow.
+        const r = (upper.swing * Math.PI) / 180;
+        const len = L.upper * upper.foreshorten;
+        arm.elbowG.setAttribute(
+          "transform",
+          `translate(${(-len * Math.sin(r)).toFixed(2)} ${(len * Math.cos(r)).toFixed(2)}) `
+          + fore.transform);
       }
 
       if (this.parts.readout) {
