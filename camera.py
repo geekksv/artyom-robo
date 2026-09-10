@@ -12,6 +12,7 @@ keeps working.
 """
 import io
 import threading
+import time
 
 try:
     from picamera2 import Picamera2
@@ -42,6 +43,8 @@ class _StreamingOutput(io.BufferedIOBase):
 
 
 class Camera:
+    PROBE_TTL = 5.0  # seconds: re-check for the sensor this often while absent
+
     def __init__(self, size=(1280, 720), hflip=False, vflip=False):
         self.size = size
         self.transform = (hflip, vflip)
@@ -50,23 +53,31 @@ class Camera:
         self.output = None
         self.viewers = 0
         self.error = None if _HAVE_LIB else _IMPORT_ERR
+        self._present = False
+        self._probe_at = 0.0
+        self.lores_size = (320, 240)  # face-detection frame size
 
     @property
     def available(self):
         return _HAVE_LIB and self._probe()
 
     def _probe(self):
-        # Cheap one-time check that a camera is physically present.
-        if getattr(self, "_probed", None) is not None:
-            return self._probed
+        # Check that a camera is physically present. Latches True once found (so
+        # we don't re-enumerate on every poll), but keeps re-checking while
+        # absent so a reconnected ribbon cable is picked up without a restart.
+        if self._present:
+            return True
+        now = time.monotonic()
+        if now - self._probe_at < self.PROBE_TTL:
+            return False
+        self._probe_at = now
         try:
-            self._probed = len(Picamera2.global_camera_info()) > 0
-            if not self._probed:
-                self.error = "no camera detected"
+            self._present = len(Picamera2.global_camera_info()) > 0
+            self.error = None if self._present else "no camera detected"
         except Exception as e:  # noqa: BLE001
-            self._probed = False
+            self._present = False
             self.error = repr(e)
-        return self._probed
+        return self._present
 
     def _ensure_started(self):
         if self.picam2 is not None:
@@ -77,6 +88,9 @@ class Camera:
         cam = Picamera2()
         cfg = cam.create_video_configuration(
             main={"size": self.size},
+            # Low-res grayscale-friendly stream for face detection (cheap to read
+            # while the main stream is being MJPEG-encoded for the browser).
+            lores={"size": self.lores_size, "format": "YUV420"},
             transform=Transform(hflip=hflip, vflip=vflip),
         )
         cam.configure(cfg)
@@ -93,6 +107,39 @@ class Camera:
                 pass
             self.picam2 = None
             self.output = None
+
+    # -- frame access for computer vision (face tracking) -------------------
+    def acquire(self):
+        """Keep the camera running for a non-viewer consumer (e.g. tracker)."""
+        if not self.available:
+            raise RuntimeError(self.error or "camera unavailable")
+        with self.lock:
+            self._ensure_started()
+            self.viewers += 1
+
+    def release(self):
+        with self.lock:
+            # Never go negative: a failed acquire() followed by release() would
+            # otherwise leave a phantom viewer credit and keep the sensor open.
+            if self.viewers <= 0:
+                self.viewers = 0
+                return
+            self.viewers -= 1
+            if self.viewers == 0:
+                self._stop()
+
+    def capture_gray(self):
+        """Return the latest low-res frame as a grayscale ndarray, or None.
+
+        The lores stream is YUV420; the luma (Y) plane is the top `h` rows and
+        is already a usable grayscale image for Haar detection.
+        """
+        cam = self.picam2
+        if cam is None:
+            return None
+        arr = cam.capture_array("lores")
+        w, h = self.lores_size
+        return arr[:h, :w]
 
     def frames(self):
         """Generator yielding multipart MJPEG chunks for one viewer."""
@@ -114,10 +161,7 @@ class Camera:
                     + frame + b"\r\n"
                 )
         finally:
-            with self.lock:
-                self.viewers -= 1
-                if self.viewers <= 0:
-                    self._stop()
+            self.release()
 
     def snapshot(self):
         """Return a single JPEG frame (starts/keeps the camera as needed)."""
@@ -131,7 +175,4 @@ class Camera:
                 self.output.condition.wait(timeout=5)
                 return self.output.frame
         finally:
-            with self.lock:
-                self.viewers -= 1
-                if self.viewers <= 0:
-                    self._stop()
+            self.release()

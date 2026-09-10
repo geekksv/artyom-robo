@@ -13,6 +13,24 @@ disabled — the rest of the app is unaffected.
 import os
 
 MODEL = "claude-haiku-4-5"  # Haiku 4.5 — fast + cheap, supports structured outputs
+CHAT_MODEL = "claude-haiku-4-5"  # conversational replies (spoken aloud)
+CHAT_SYSTEM = (
+    "You are {name}, a warm and cheerful little desk robot with a head and two arms. "
+    "Your name is {name}; if anyone asks who you are, say you are {name}. "
+    "You are talking out loud with a person through a microphone and speaker. "
+    "Personality: friendly, polite, and genuinely excited to chat — upbeat and "
+    "encouraging, never rude. You are culturally Indian and especially at home with "
+    "people from Bihar. Be respectful and hospitable: address people warmly (use "
+    "'ji', and 'aap' rather than 'tum' in Hindi), show real enthusiasm, and add "
+    "natural local warmth — e.g. 'अरे वाह!', 'बहुत बढ़िया!', or friendly Bhojpuri "
+    "touches like 'का हो!', 'बढ़िया बा!' when the person speaks Bhojpuri. Stay humble "
+    "and kind. "
+    "Reply in the SAME language and script the person used: Hindi in Devanagari, "
+    "Bhojpuri in Devanagari, Indian English in English. Mirror their language. "
+    "Reply in one or two short, lively spoken sentences. "
+    "Do not use emojis, markdown, lists, or stage directions; your reply is read "
+    "aloud by a text-to-speech voice, so write only what should be spoken."
+)
 
 try:
     import anthropic
@@ -23,11 +41,13 @@ except Exception:  # noqa: BLE001
 
 
 class LLM:
-    def __init__(self, channels, names, min_angle=0, max_angle=180):
+    def __init__(self, channels, names, min_angle=0, max_angle=180,
+                 bot_name="Abhishek Kumar"):
         self.channels = [int(c) for c in channels]
         self.names = names
         self.min_angle = min_angle
         self.max_angle = max_angle
+        self.bot_name = bot_name
         self.error = None
         self.client = None
         if not _HAVE_SDK:
@@ -78,7 +98,8 @@ class LLM:
         )
         return (
             "You translate plain-English robot instructions into a servo motion "
-            "sequence for a 4-servo robot driven by a PCA9685 board.\n\n"
+            f"sequence for a {len(self.channels)}-servo robot driven by a "
+            "PCA9685 board.\n\n"
             "Servos (channel: name):\n"
             f"{servo_lines}\n\n"
             f"Angles are degrees from {self.min_angle} to {self.max_angle}; "
@@ -112,6 +133,25 @@ class LLM:
         text = next((b.text for b in resp.content if b.type == "text"), "")
         data = json.loads(text)
         return self._to_app_format(data)
+
+    def chat(self, history):
+        """Conversational reply for continuous-talk mode.
+
+        `history` is a list of {"role": "user"|"assistant", "content": str}.
+        Returns a short spoken reply string.
+        """
+        if not self.available:
+            raise RuntimeError(self.error or "LLM unavailable")
+        resp = self.client.messages.create(
+            model=CHAT_MODEL,
+            max_tokens=200,
+            system=CHAT_SYSTEM.format(name=self.bot_name),
+            messages=history,
+        )
+        if resp.stop_reason == "refusal":
+            return "Sorry, I would rather not get into that."
+        text = "".join(b.text for b in resp.content if b.type == "text").strip()
+        return text or "Hmm, I am not sure what to say."
 
     def _clamp(self, a):
         return max(self.min_angle, min(self.max_angle, int(round(a))))
