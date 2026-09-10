@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="docs/media/robot-finished.jpg" alt="Artyom, a cardboard desk robot dressed in a shirt and tie" width="300">
-
 # Artyom Robo
 
 **A cardboard desk robot that listens, talks back in Hindi or English,
@@ -22,9 +20,9 @@ nothing to install.*
 
 <br>
 
-<img src="docs/media/robot-team.jpg" alt="Artyom on demo day, with the people who built it" width="560">
+<img src="docs/media/robot-team.jpg" alt="Artyom on demo day, standing between two of the people who built it" width="420">
 
-<sub>Demo day. The robot is five servos, two cardboard boxes and a Raspberry Pi.</sub>
+<sub>Demo day. Five servos, a few cardboard boxes and a Raspberry Pi.</sub>
 
 </div>
 
