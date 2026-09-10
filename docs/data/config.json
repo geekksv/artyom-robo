@@ -1,0 +1,61 @@
+{
+  "channels": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "names": {
+    "0": "Head",
+    "1": "Right shoulder",
+    "2": "Right elbow",
+    "3": "Left shoulder",
+    "4": "Left elbow"
+  },
+  "arms": [
+    [
+      1,
+      2
+    ],
+    [
+      3
+    ]
+  ],
+  "invert": [
+    3,
+    4
+  ],
+  "park_channels": [
+    4
+  ],
+  "limits": {
+    "1": [
+      40,
+      180
+    ],
+    "2": [
+      75,
+      180
+    ],
+    "3": [
+      40,
+      180
+    ],
+    "4": [
+      75,
+      180
+    ]
+  },
+  "min_angle": 0,
+  "max_angle": 180,
+  "start_angle": 90,
+  "party_dances": [
+    "dance-disco",
+    "dance-bounce",
+    "dance-wave",
+    "dance-robot"
+  ],
+  "face_track_channel": 0,
+  "bot_name": "Abhishek Kumar"
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Artyom Robo — browser demo</title>
+  <meta name="description" content="Drive an AI-controlled desk robot in your browser. Runs the real motion sequences, the real gesture algorithm and the real party beat — no Raspberry Pi required." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+  <link rel="stylesheet" href="css/demo.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Artyom&nbsp;Robo</h1>
+      <span class="tag">browser demo</span>
+    </div>
+    <div class="head-links">
+      <span id="statusBadge" class="badge">simulated</span>
+      <a class="btn ghost small" href="https://github.com/geekksv/artyom-robo">Source&nbsp;↗</a>
+    </div>
+  </header>
+
+  <p class="lede"><span>
+    The same code that drives a cardboard robot on a Raspberry&nbsp;Pi, running
+    in your browser. The sequences below are the robot's real
+    <code>default_sequences.json</code>; the motion easing, the arm gestures and
+    the party beat are ports of the Python it actually runs.
+    <b>No hardware, no API key, nothing to install.</b>
+  </span></p>
+
+  <main>
+    <!-- ROBOT -->
+    <section class="card stage">
+      <div id="robot" class="robot"></div>
+      <div class="stage-foot">
+        <span id="nowPlaying" class="muted">idle</span>
+        <div class="actions">
+          <button id="centerBtn" class="btn">Center all</button>
+          <button id="stopBtn" class="btn danger">■ Stop</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="col">
+      <!-- SEQUENCES -->
+      <section class="card">
+        <div class="card-head">
+          <h2>Motion sequences</h2>
+          <span class="badge" id="seqCount"></span>
+        </div>
+        <p class="muted small">
+          Loaded from the robot's own sequence file. Each step interpolates over
+          <code>move_time</code> seconds, then holds — the same 20&nbsp;ms easing
+          loop as <code>servo.py</code>.
+        </p>
+        <div id="seqList" class="seq-list"></div>
+      </section>
+
+      <!-- TALK -->
+      <section class="card">
+        <div class="card-head">
+          <h2>Speech-synced gestures</h2>
+          <span class="badge">the interesting bit</span>
+        </div>
+        <p class="muted small">
+          Type a sentence. The arms are <em>not</em> animated randomly — a
+          keyframe timeline is derived from the words themselves: one beat per
+          word, bigger for longer words, both arms thrown on <b>!</b> and
+          <b>?</b>, relaxing to rest at each full stop. Try
+          <em>"Wow! Really? Yes, absolutely incredible."</em>
+        </p>
+        <div class="row-inline">
+          <input id="sayText" class="text" value="Hello! I am Artyom. Would you like to see me dance?" />
+          <button id="sayBtn" class="btn primary">🔊 Say it</button>
+        </div>
+        <label class="inline muted small">
+          <input type="checkbox" id="voiceChk" checked /> speak out loud (browser voice)
+        </label>
+      </section>
+
+      <!-- PARTY + TRACKING -->
+      <section class="card">
+        <div class="card-head"><h2>The fun ones</h2></div>
+        <div class="row-inline wrap">
+          <button id="partyBtn" class="btn">🎉 Party mode</button>
+          <button id="trackBtn" class="btn">🙂 Face tracking</button>
+        </div>
+        <p class="muted small" id="funNote">
+          Party mode plays a dance sequence over a beat this page synthesizes
+          from scratch. Face tracking asks for your camera and pans the head to
+          follow you — the video never leaves your device.
+        </p>
+      </section>
+
+      <!-- SERVOS -->
+      <section class="card">
+        <div class="card-head">
+          <h2>Live servo control</h2>
+          <span class="badge" id="mockBadge">5 channels</span>
+        </div>
+        <div id="servos" class="servos"></div>
+        <p class="muted small" id="servoNote"></p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      Built by <a href="https://github.com/geekksv">geekksv</a> ·
+      <a href="https://github.com/geekksv/artyom-robo">Source and full write-up on GitHub</a>
+    </p>
+  </footer>
+
+  <video id="camFeed" playsinline muted hidden></video>
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/robot.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/beat.js"></script>
+  <script src="js/demo.js"></script>
+</body>
+</html>
