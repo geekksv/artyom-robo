@@ -167,3 +167,9 @@ footer {
 }
 
 #camFeed { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* -- the real robot ------------------------------------------------------- */
+.reel {
+  display: block; width: 100%; max-width: 300px; margin: 0 auto;
+  border: 1px solid var(--line); border-radius: 10px; background: #000;
+}
