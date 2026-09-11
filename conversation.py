@@ -166,6 +166,13 @@ class Conversation:
         """
         self.stop_event.set()
         self.status = "idle"
+        # Cut the sentence that is playing right now. Without this the gestures
+        # freeze instantly but the robot keeps talking to the end of the line,
+        # which reads as it ignoring you.
+        stop_speech = getattr(self.speaker, "stop", None)
+        if callable(stop_speech):
+            with contextlib.suppress(Exception):
+                stop_speech()
         thread = self.thread
         if thread is not None and thread.is_alive() and thread is not threading.current_thread():
             thread.join(timeout=self.seconds + 5)

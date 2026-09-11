@@ -17,10 +17,11 @@ camera.py / llm.py / voice.py.
 import contextlib
 import os
 import shutil
-import subprocess
 import tempfile
 import threading
 import wave
+
+from playback import PipeWirePlayer
 
 try:
     from piper import PiperVoice
@@ -40,7 +41,8 @@ class Speaker:
         self.model_path = str(model_path)
         self.runtime_dir = runtime_dir
         self.length_scale = float(length_scale)
-        self.lock = threading.Lock()  # serialize: one utterance at a time
+        self.lock = threading.Lock()  # serialize synthesis
+        self._player = PipeWirePlayer(runtime_dir)
         self.voice = None
         self.error = None
         if not _HAVE_PIPER:
@@ -85,21 +87,12 @@ class Speaker:
         return tmp.name, duration
 
     def play(self, path):
-        """Play a WAV file through PipeWire (blocks until done)."""
-        env = dict(
-            os.environ,
-            XDG_RUNTIME_DIR=self.runtime_dir,
-            PIPEWIRE_RUNTIME_DIR=self.runtime_dir,
-        )
-        with self.lock:
-            try:
-                subprocess.run(
-                    ["pw-play", path],
-                    env=env, check=True, capture_output=True, timeout=120,
-                )
-            except subprocess.CalledProcessError as e:
-                msg = e.stderr.decode(errors="ignore").strip() or str(e)
-                raise RuntimeError(f"playback failed: {msg}") from e
+        """Play a WAV file through PipeWire (blocks until done, or until stop())."""
+        self._player.play(path)
+
+    def stop(self):
+        """Cut off the sentence currently being spoken."""
+        return self._player.stop()
 
     def say(self, text, voice=None):
         """Synthesize `text` and play it (blocks until playback finishes)."""

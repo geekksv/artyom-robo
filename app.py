@@ -306,6 +306,15 @@ def party_dances():
     return [n for n in names if n in SEQUENCES]
 
 
+def _hush():
+    """Cut off any sentence currently being spoken."""
+    if speaker is not None and hasattr(speaker, "stop"):
+        try:
+            speaker.stop()
+        except Exception as e:  # noqa: BLE001
+            print(f"[tts] stop failed: {e}")
+
+
 def start_party(duration=None):
     """Pick a dance and play a random song (or generated beat) alongside it.
 
@@ -348,6 +357,7 @@ def stop_party(finished=False):
     if music:
         music.stop()
     chant.stop()
+    _hush()          # chant.stop() only clears the flag; this cuts the audio
     runner.stop()
     if finished:
         ctrl.center()            # reset all servos to 90
@@ -669,8 +679,10 @@ def api_run_adhoc():
 
 @app.post("/api/stop")
 def api_stop():
+    """Stop everything: motion, party audio, and the robot mid-sentence."""
     stop_party()
     chant.stop()
+    _hush()
     runner.stop()
     return jsonify({"running": None})
 

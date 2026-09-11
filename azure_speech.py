@@ -28,6 +28,8 @@ from xml.sax.saxutils import escape
 
 import httpx
 
+from playback import PipeWirePlayer
+
 _DEVANAGARI = re.compile(r"[ऀ-ॿ]")
 
 
@@ -112,7 +114,7 @@ class AzureTTS:
         self.region = region or _region()
         self.key = _key()
         self.runtime_dir = runtime_dir
-        self.lock = threading.Lock()  # serialize: one utterance at a time
+        self._player = PipeWirePlayer(runtime_dir)
         self.error = None
         if not self.key:
             self.error = "AZURE_SPEECH_KEY not set"
@@ -168,21 +170,12 @@ class AzureTTS:
         return tmp.name, duration
 
     def play(self, path):
-        """Play a WAV file through PipeWire (blocks until done)."""
-        env = dict(
-            os.environ,
-            XDG_RUNTIME_DIR=self.runtime_dir,
-            PIPEWIRE_RUNTIME_DIR=self.runtime_dir,
-        )
-        with self.lock:
-            try:
-                subprocess.run(
-                    ["pw-play", path],
-                    env=env, check=True, capture_output=True, timeout=120,
-                )
-            except subprocess.CalledProcessError as e:
-                msg = e.stderr.decode(errors="ignore").strip() or str(e)
-                raise RuntimeError(f"playback failed: {msg}") from e
+        """Play a WAV file through PipeWire (blocks until done, or until stop())."""
+        self._player.play(path)
+
+    def stop(self):
+        """Cut off the sentence currently being spoken."""
+        return self._player.stop()
 
     def say(self, text, voice=None):
         path, _ = self.synth(text, voice=voice)
