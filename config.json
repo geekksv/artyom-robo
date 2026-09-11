@@ -7,9 +7,9 @@
     "3": "Left shoulder",
     "4": "Left elbow"
   },
-  "arms": [[1, 2], [3]],
+  "arms": [[1, 2], [3, 4]],
   "invert": [3, 4],
-  "park_channels": [4],
+  "park_channels": [],
   "limits": {
     "1": [40, 180],
     "2": [75, 180],

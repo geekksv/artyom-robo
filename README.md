@@ -208,23 +208,50 @@ schema, the system prompt and the validation all follow.
 
 ## Hardware
 
-| Part | Notes |
-|---|---|
-| Raspberry Pi | I²C enabled on bus 1 |
-| PCA9685 16-channel PWM board | at `0x40`, separate supply on the V+ rail |
-| 5 × Deao digital servos (20 kg / 40 kg) | DC 4.8–7.4 V |
-| 5 V 40 A SMPS | servos draw far more than the Pi can supply |
-| CSI camera | mounted at the neck |
-| USB microphone | any ALSA capture device |
-| Bluetooth speaker | classic A2DP, paired and trusted once |
-| Cardboard, glue, marker pens | the chassis |
+<div align="center">
+<img src="docs/media/wiring.svg" alt="Wiring diagram: a 5 V 40 A SMPS feeds the PCA9685 screw terminal directly; the Raspberry Pi supplies logic and I2C over four jumpers from pins 1, 3, 5 and 6; the driver fans three-wire leads out to five servos" width="880">
+</div>
+
+The split that matters: **the Pi never carries servo current.** Four jumpers from its
+header (pins 1, 3, 5, 6) give the PCA9685 logic power and I²C, and that is all they do.
+Every amp the servos draw comes from the SMPS, straight into the driver's screw terminal
+with nothing in between. The two meet at the driver's ground — and they have to, or the
+PWM has no reference and the servos twitch.
 
 Channels: `0` head pan · `1`/`2` right shoulder + elbow · `3`/`4` left shoulder + elbow.
 The arms are flat panels hinged at the top corners of the torso, so they lift forward
 and up — there is no sideways travel.
 
-A CCPM servo tester is worth having to find each servo's real travel before wiring, so
-`min_pulse` / `max_pulse` can be narrowed if a servo buzzes at the extremes.
+<details>
+<summary><b>Full parts list</b> — what was bought, and what it cost</summary>
+
+<br>
+
+| Part | Category | Spec |
+|---|---|---|
+| Digital servo motor | Motor | 20 kg load — head, both elbows |
+| Digital servo motor | Motor | 40 kg load — both shoulders |
+| SMPS | Power | 5 V 40 A — feeds the driver directly |
+| PCA9685 servo driver | Driver | 16-channel PWM, I²C `0x40` |
+| Servo tester | Tool | CCPM — find each servo's real travel before wiring |
+| Servo mount brackets | Chassis | multi-purpose and U type |
+| 6 mm coupler | Chassis | shaft coupling |
+| M3 × 20 mm brass hex spacers | Chassis | standoffs |
+| M3 × 60 mm brass hex spacers | Chassis | standoffs |
+| Screws, nuts | Chassis | assorted |
+| Jumper wire | Wiring | I²C and signal |
+| Glue gun | Tool | assembly |
+
+**₹16,899 for the lot.** The Raspberry Pi, CSI camera, USB microphone and Bluetooth
+speaker were already to hand and aren't in that figure. The chassis is cardboard boxes,
+glue and marker pens. A pair of step-down converters was bought early on and ended up
+unused — the SMPS drives the servos at 5 V directly.
+
+A servo tester earns its place: run each servo through its range before it is bolted in,
+then narrow `min_pulse` / `max_pulse` in `config.json` for any that buzz or strain at the
+extremes.
+
+</details>
 
 ---
 

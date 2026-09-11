@@ -19,16 +19,15 @@
       2
     ],
     [
-      3
+      3,
+      4
     ]
   ],
   "invert": [
     3,
     4
   ],
-  "park_channels": [
-    4
-  ],
+  "park_channels": [],
   "limits": {
     "1": [
       40,

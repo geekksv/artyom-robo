@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 560" width="920" height="560"
+     font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img"
+     aria-label="Artyom Robo wiring: a 5 V 40 A SMPS feeds the PCA9685 V+ screw terminal directly; the Raspberry Pi drives it over I2C from pins 1, 3, 5 and 6; the driver fans three-wire PWM leads out to five servos; the camera is on the CSI ribbon.">
+  <style>
+    :root, svg {
+      --bg:#ffffff; --panel:#f6f7f9; --panel2:#eceef2; --edge:#9aa3ae;
+      --ink:#15181d; --muted:#5d6874; --pwr:#d64541; --gnd:#3a3f47;
+      --i2c:#2f6fd0; --pwm:#c8890f; --warn:#a8410f; --warnbg:#fdf1e7;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root, svg {
+        --bg:#0e1116; --panel:#1b222c; --panel2:#242d38; --edge:#46525f;
+        --ink:#e6edf3; --muted:#8b97a3; --pwr:#f0665f; --gnd:#9aa5b1;
+        --i2c:#5f9dff; --pwm:#e3b341; --warn:#e8a06a; --warnbg:#2a1d13;
+      }
+    }
+    .bg   { fill: var(--bg); }
+    .box  { fill: var(--panel);  stroke: var(--edge); stroke-width: 1.5; }
+    .box2 { fill: var(--panel2); stroke: var(--edge); stroke-width: 1.5; }
+    .t    { fill: var(--ink);   font-size: 14px; font-weight: 600; }
+    .s    { fill: var(--muted); font-size: 11.5px; }
+    .pin  { fill: var(--ink);   font-size: 11px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .pinm { fill: var(--muted); font-size: 11px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .title{ fill: var(--ink);   font-size: 17px; font-weight: 700; }
+    .lbl  { font-size: 10.5px; font-weight: 600; }
+    .w    { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .pwr  { stroke: var(--pwr); }  .pwrT { fill: var(--pwr); }
+    .gnd  { stroke: var(--gnd); }
+    .i2c  { stroke: var(--i2c); }  .i2cT { fill: var(--i2c); }
+    .pwm  { stroke: var(--pwm); }  .pwmT { fill: var(--pwm); }
+    .air  { stroke: var(--muted); stroke-width: 1.8; stroke-dasharray: 3 5; fill: none; }
+    .warnbox { fill: var(--warnbg); stroke: var(--warn); stroke-width: 1.2; }
+    .warnt   { fill: var(--warn); font-size: 11.5px; font-weight: 600; }
+  </style>
+
+  <defs>
+    <marker id="ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--pwr)"/></marker>
+    <marker id="ai" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--i2c)"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--pwm)"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--gnd)"/></marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="560"/>
+  <text class="title" x="24" y="30">Artyom Robo — wiring</text>
+  <text class="s" x="228" y="30">Raspberry Pi · PCA9685 · 5 servos · 5 V 40 A SMPS</text>
+
+  <!-- ── SMPS ────────────────────────────────────────────────────────────── -->
+  <text class="s" x="42" y="56">230 V AC in</text>
+  <path class="w pwr" marker-end="url(#ap)" d="M124,62 L124,84"/>
+
+  <rect class="box" rx="8" x="24" y="88" width="200" height="86"/>
+  <text class="t" x="42" y="112">SMPS</text>
+  <text class="s" x="42" y="129">HiLight · 5 V 40 A</text>
+  <line x1="24" y1="140" x2="224" y2="140" stroke="var(--edge)" stroke-width="1"/>
+  <text class="pin"  x="42" y="159">V+</text>
+  <text class="pin"  x="42" y="159" dx="34" fill="var(--muted)">V−</text>
+
+  <!-- SMPS straight into the driver's screw terminal: nothing in between -->
+  <path class="w pwr" marker-end="url(#ap)" d="M228,154 L266,154 L266,166 L308,166"/>
+  <path class="w gnd" marker-end="url(#ag)" d="M228,168 L250,168 L250,186 L308,186"/>
+  <text class="lbl pwrT" x="232" y="140">5 V direct</text>
+
+  <!-- ── PCA9685 ─────────────────────────────────────────────────────────── -->
+  <rect class="box" rx="8" x="312" y="88" width="272" height="244"/>
+  <text class="t" x="330" y="114">PCA9685 servo driver</text>
+  <text class="s" x="330" y="131">16-channel PWM · I²C address 0x40</text>
+
+  <rect class="box2" rx="5" x="330" y="146" width="150" height="46"/>
+  <text class="pinm" x="342" y="162">screw terminal</text>
+  <text class="pin"  x="342" y="182">V+        GND</text>
+
+  <rect class="box2" rx="5" x="330" y="204" width="236" height="62"/>
+  <text class="pinm" x="342" y="220">logic header — from the Pi</text>
+  <text class="pin"  x="342" y="238">VCC    SDA    SCL    GND</text>
+  <text class="pinm" x="342" y="256">pin 1  pin 3  pin 5  pin 6</text>
+
+  <rect class="box2" rx="5" x="330" y="278" width="236" height="40"/>
+  <text class="pinm" x="342" y="294">channel header — to the servos</text>
+  <text class="pin"  x="342" y="310">ch0   ch1   ch2   ch3   ch4</text>
+
+  <!-- ── Raspberry Pi ────────────────────────────────────────────────────── -->
+  <rect class="box" rx="8" x="24" y="244" width="200" height="126"/>
+  <text class="t" x="42" y="268">Raspberry Pi</text>
+  <text class="s" x="42" y="285">I²C bus 1 · 4 jumpers</text>
+  <line x1="24" y1="296" x2="224" y2="296" stroke="var(--edge)" stroke-width="1"/>
+  <text class="pin" x="42" y="315">pin 1   3V3</text>
+  <text class="pin" x="42" y="331">pin 3   SDA</text>
+  <text class="pin" x="42" y="347">pin 5   SCL</text>
+  <text class="pin" x="42" y="363">pin 6   GND</text>
+
+  <path class="w i2c" marker-end="url(#ai)" d="M228,312 L272,312 L272,237 L326,237"/>
+  <text class="lbl i2cT" x="232" y="298">logic only</text>
+
+  <!-- ── servo fan-out ───────────────────────────────────────────────────── -->
+  <path class="w pwm" d="M570,298 L616,298 L616,96"/>
+  <path class="w pwm" marker-end="url(#am)" d="M616,96  L664,96"/>
+  <path class="w pwm" marker-end="url(#am)" d="M616,148 L664,148"/>
+  <path class="w pwm" marker-end="url(#am)" d="M616,200 L664,200"/>
+  <path class="w pwm" marker-end="url(#am)" d="M616,252 L664,252"/>
+  <path class="w pwm" marker-end="url(#am)" d="M616,304 L664,304"/>
+
+  <g>
+    <rect class="box2" rx="8" x="668" y="74" width="228" height="44"/>
+    <text class="t" x="684" y="94">ch0 · Head</text>
+    <text class="s" x="684" y="109">pan · 20 kg digital servo</text>
+
+    <rect class="box2" rx="8" x="668" y="126" width="228" height="44"/>
+    <text class="t" x="684" y="146">ch1 · Right shoulder</text>
+    <text class="s" x="684" y="161">40 kg digital servo</text>
+
+    <rect class="box2" rx="8" x="668" y="178" width="228" height="44"/>
+    <text class="t" x="684" y="198">ch2 · Right elbow</text>
+    <text class="s" x="684" y="213">20 kg digital servo</text>
+
+    <rect class="box2" rx="8" x="668" y="230" width="228" height="44"/>
+    <text class="t" x="684" y="250">ch3 · Left shoulder</text>
+    <text class="s" x="684" y="265">40 kg · mirror-mounted</text>
+
+    <rect class="box2" rx="8" x="668" y="282" width="228" height="44"/>
+    <text class="t" x="684" y="302">ch4 · Left elbow</text>
+    <text class="s" x="684" y="317">20 kg · mirror-mounted</text>
+  </g>
+
+  <!-- ── one servo lead, exploded ────────────────────────────────────────── -->
+  <rect class="box" rx="8" x="312" y="352" width="272" height="104"/>
+  <text class="t" x="330" y="376">One channel, close up</text>
+  <text class="s" x="330" y="392">every servo lead is the same three wires</text>
+  <line class="w gnd" x1="332" y1="412" x2="374" y2="412"/>
+  <text class="pin"  x="384" y="416">GND</text>
+  <text class="pinm" x="428" y="416">brown — from the SMPS</text>
+  <line class="w pwr" x1="332" y1="430" x2="374" y2="430"/>
+  <text class="pin"  x="384" y="434">V+</text>
+  <text class="pinm" x="428" y="434">red — from the SMPS</text>
+  <line class="w pwm" x1="332" y1="448" x2="374" y2="448"/>
+  <text class="pin"  x="384" y="452">PWM</text>
+  <text class="pinm" x="428" y="452">orange — from the PCA9685</text>
+
+  <path class="w air" marker-end="url(#aa)" d="M448,336 L448,348"/>
+
+  <!-- ── camera ──────────────────────────────────────────────────────────── -->
+  <rect class="box2" rx="8" x="24" y="404" width="200" height="46"/>
+  <text class="t" x="42" y="424">CSI camera</text>
+  <text class="s" x="42" y="440">ribbon → Pi CSI port</text>
+  <path class="w air" marker-end="url(#aa)" d="M124,400 L124,376"/>
+
+  <!-- ── legend + callout ────────────────────────────────────────────────── -->
+  <g transform="translate(24,486)">
+    <line class="w pwr" x1="0"   y1="10" x2="26"  y2="10"/><text class="s" x="32"  y="14">+5 V</text>
+    <line class="w gnd" x1="80"  y1="10" x2="106" y2="10"/><text class="s" x="112" y="14">ground</text>
+    <line class="w i2c" x1="176" y1="10" x2="202" y2="10"/><text class="s" x="208" y="14">I²C</text>
+    <line class="w pwm" x1="240" y1="10" x2="266" y2="10"/><text class="s" x="272" y="14">PWM</text>
+  </g>
+
+  <rect class="warnbox" rx="6" x="352" y="474" width="544" height="60"/>
+  <text class="warnt" x="368" y="495">Never power the servos from the Pi.</text>
+  <text class="s" x="368" y="513">The Pi supplies logic only — 3V3 and I²C. Every amp the servos draw comes from</text>
+  <text class="s" x="368" y="528">the SMPS, and both share a ground through the driver or the PWM has no reference.</text>
+</svg>
