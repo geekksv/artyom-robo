@@ -20,7 +20,7 @@ nothing to install.*
 
 <br>
 
-<img src="docs/media/robot-team.jpg" alt="Artyom on demo day, standing between two of the people who built it" width="420">
+<img src="docs/media/robot-team.jpg" alt="Artyom on demo day, standing between the two people who built it" width="360">
 
 <sub>Demo day. Five servos, a few cardboard boxes and a Raspberry Pi.</sub>
 
@@ -323,10 +323,13 @@ docs/                  the browser demo (GitHub Pages)
 
 ## Limitations, honestly
 
-- **Speech is turn-based, not streaming.** The mic records a fixed 4-second clip, then
-  stops to think. You cannot interrupt the robot mid-sentence, and short answers still
-  wait out the window. Streaming STT with barge-in is the single biggest improvement
-  left.
+- **You can cut the robot off, but only by hand.** Stop in the UI kills the sentence
+  mid-word — playback is a child process the stop path terminates — and the arms settle
+  at once. What you *can't* do is interrupt by talking: the mic stays closed while the
+  robot speaks, so there is no barge-in.
+- **Listening is turn-based, not streaming.** The mic records a fixed 4-second clip,
+  then stops to think, so a two-word answer still waits out the whole window. Streaming
+  STT is the single biggest improvement left.
 - **Four subsystems write to the same servo bus.** The sequence runner, the face
   tracker and the gesture loop are coordinated by explicit hand-offs — a sequence that
   pans the head borrows it from the tracker and gives it back. A priority-based arbiter
@@ -344,6 +347,6 @@ docs/                  the browser demo (GitHub Pages)
 
 <div align="center">
 
-[MIT](LICENSE) · built by [geekksv](https://github.com/geekksv)
+Built by [geekksv](https://github.com/geekksv) and [princeranjan279](https://github.com/princeranjan279) · [MIT](LICENSE)
 
 </div>
